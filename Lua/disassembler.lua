@@ -78,7 +78,7 @@ elseif extension == ".hack" then
     -- if operationCode is 0, then it's an A instruction
     if operationCode == '0' then
       -- convert binary to decimal, then convert that to a string
-      local val = tostring(tonumber(string.sub(line,2,16)))
+      local val = tonumber(string.sub(line,2,16))
       --concatenate to crate instruction
       local instruction = '@'..val
       -- insert into hacklist
@@ -96,7 +96,7 @@ elseif extension == ".hack" then
       -- return HACK instruction from destTable using destBits
       dest = destTable[destBits]
       -- return HACK instruction from compTable using compBits
-       compUnfiltered = tostring(compTable[compBits])
+       compUnfiltered = compTable[compBits]
       -- initialise/clear comp
       comp = ""
       -- filter compUnfiltered to find the actual computation
@@ -113,7 +113,7 @@ elseif extension == ".hack" then
         comp = compUnfiltered
       end
       -- return HACK instruction from jumpTable using jmpBits
-      jmp = tostring(jumpTable[jmpBits])
+      jmp = jumpTable[jmpBits]
       -- concatenate instruction and add to hackList
       instruction = dest..comp..jmp
       table.insert(hackList,instruction)
