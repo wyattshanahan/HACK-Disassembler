@@ -1,6 +1,23 @@
+<?
+function output($message)  /*function to output to console*/
+{
+    $message = date("H:i:s") . " - $message ".PHP_EOL;
+    print($message);
+    flush();
+}
+
+if ($argc < 2){ // check if any arguments provided, exit if not
+  output("ERROR: No input file provided. Use php disassembler.php <input file>");
+  die("");
+}
+
+if (strpos($argv[1],".hack")==false){ // check if valid file type provided as argument
+  output("ERROR: Input file must be a .hack file");
+  die("");
+}
 /* write file opening and check file is .hack*/
 /* read lines*/
-<?
+
 $compTable = [
   '101010' => '0',
   '111111' => '1',
@@ -43,4 +60,5 @@ $jumpTable = [
   '110' => ';JLE',
   '111' => ';JMP'
 ];
-
+output("Hello, world!");
+?>
