@@ -4,7 +4,7 @@ To run, type: php disassembler.php <fileName.hack>
 
 This program is intended for use in PHP CLI*/
 
-function output($message)  /*function to output to console*/
+function output($message)  /*function to output to console with timestamps*/
 {
     $message = date("H:i:s") . " - $message ".PHP_EOL;
     print($message);
