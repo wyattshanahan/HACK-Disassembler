@@ -10,8 +10,8 @@ It can be found at www.nand2tetris.org and in the book "The Elements of Computin
 # Current languages supported
 
 - Lua
-- Python
 - PHP (CLI-based)
+- Python
 
 # How to use
 
