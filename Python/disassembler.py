@@ -1,121 +1,97 @@
+#  This program converts Hack binary into Hack Assembly Language.
+# To run, type: python disassembler.py <fileName.hack>
+# if on a Linux system, you may need to run it with: python3 disassembler.py <fileName.hack>
+
 import sys
 from os.path import exists as file_exists
 
-### How to run the code ###
-
-# 1. Ensure that Python is setup on your system (Python 3)
-#   Run python -V to check
-
-#   python -V Output
-#       Python 3.10.8
-
-# 2. Go to the directory where your files are located 
-# You can check if your files are there by running 'ls' in the terminal
-
-# 3. Run the following
-# python ./disassembler.py "sample.hack"
-
-# You may need to change python to python3 if it fails
-# You will need to substitute "sample.hack" for the appropriate HACK file
-
+if len(sys.argv) < 2:  # check that argument/input file provided
+  print(
+      "ERROR: No input file provided. Use python disassembler.py <fileName.hack>"
+  )
+  exit(1)
 # Check if appropriate file extension
-if ".hack" in sys.argv[1]:
+if ".hack" not in sys.argv[1]:
+  print("ERROR: Input file must be a Hack file.")
+  exit(1)
+else:
+  if file_exists(sys.argv[1]): # if file exists, then read lines from it
+    file = open(sys.argv[1], 'r')
+    Lines = file.readlines()
 
-    # Check if file exists
-    if file_exists(sys.argv[1]):
+    # List to be used for storing HACK instructions
+    hackList = []
 
-        file = open(sys.argv[1], 'r')
-        Lines = file.readlines()
+    # Computation Dictionary
+    compTable = {
+        '101010': '0',
+        '111111': '1',
+        '111010': '-1',
+        '001100': 'D',
+        '110000': 'A,M',
+        '001101': '!D',
+        '110001': '!A,!M',
+        '001111': '-D',
+        '110011': '-A,-M',
+        '011111': 'D+1',
+        '110111': 'A+1,M+1',
+        '001110': 'D-1',
+        '110010': 'A-1,M-1',
+        '000010': 'D+A,D+M',
+        '010011': 'D-A,D-M',
+        '000111': 'A-D,M-D',
+        '000000': 'D&A,D&M',
+        '010101': 'D|A,D|M'
+    }
 
-        # List to be used for storing HACK instructions
-        hackList = []
+    # Destination Dictionary
+    destTable = {
+        '000': '',
+        '001': 'M=',
+        '010': 'D=',
+        '011': 'DM=',
+        '100': 'A=',
+        '101': 'AM=',
+        '110': 'AD=',
+        '111': 'ADM='
+    }
 
-        # Computation Dictionary
-        compTable = {
-            '101010' : '0',
-            '111111' : '1',
-            '111010' : '-1',
-            '001100' : 'D',
-            '110000' : 'A,M',
-            '001101' : '!D',
-            '110001' : '!A,!M',
-            '001111' : '-D',
-            '110011' : '-A,-M',
-            '011111' : 'D+1',
-            '110111' : 'A+1,M+1',
-            '001110' : 'D-1',
-            '110010' : 'A-1,M-1',
-            '000010' : 'D+A,D+M',
-            '010011' : 'D-A,D-M',
-            '000111' : 'A-D,M-D',
-            '000000' : 'D&A,D&M',
-            '010101' : 'D|A,D|M'
-        }
+    # Jump Dictionary
+    jumpTable = {
+        '000': '',
+        '001': ';JGT',
+        '010': ';JEQ',
+        '011': ';JGE',
+        '100': ';JLT',
+        '101': ';JNE',
+        '110': ';JLE',
+        '111': ';JMP'
+    }
 
-        # Destination Dictionary
-        destTable = {
-            '000' : '',
-            '001' : 'M=',
-            '010' : 'D=',
-            '011' : 'DM=',
-            '100' : 'A=',
-            '101' : 'AM=',
-            '110' : 'AD=',
-            '111' : 'ADM='
-        }
+    # Loop through all assembly lines in the HACK file
+    for line in Lines:
+      if line[0] == '0': # if first bit is 0, then it is an A instruction
+        val = str(int(line[1:16], 2))  # Get rest of string, convert to decimal, then to string
+        instruction = '@' + val + '\n'  # build instruction
+        hackList.append(instruction) # add instruction to list
 
-        # Jump Dictionary
-        jumpTable = {
-            '000' : '',
-            '001' : ';JGT',
-            '010' : ';JEQ',
-            '011' : ';JGE',
-            '100' : ';JLT',
-            '101' : ';JNE',
-            '110' : ';JLE',
-            '111' : ';JMP'
-        }
+      elif line[0] == '1': # if first bit is 1, then this is a C instruction
+        aBit = line[3] # splice for retrieving the A bits
+        compBits = line[4:10] # splice to get compBits
+        destBits = line[10:13] #splice to get destbits
+        jmpBits = line[13:16] # splice out jumpbits
+        dest = destTable[destBits] # get destination string from destTable
+        compUnfiltered = compTable[compBits] #grab unfiltered computation from compTable
+        comp = compUnfiltered.split(',')[int(aBit)] # use aBit to determine the comp instruction
+        jmp = jumpTable[jmpBits] # grab jump location from jumpTable
+        instruction = dest + comp + jmp + '\n' # build instruction
+        hackList.append(instruction) # add instruction to list
+        
+    file = open(sys.argv[1].replace('.hack', '.asm'), 'w') # create and open file
+    file.writelines(hackList) # write to file
+    print("File written to " + sys.argv[1].replace('.hack', '.asm'))
+    file.close()
 
-        # Loop through all assembly lines in the HACK file
-        for line in Lines:
-            opcode = line[0] #op code
-            # A Instruction
-            # if - Check instruction op-code (the first char in the string)
-            # opcode implemented to compare, if 0 then an A instruction, if 1 then a C instruction
-            #cheese
-            if opcode == '0':
-                # Get the remaining substring and convert to decimal, then to string 
-                val = str(int(line[1:16], 2))
-                # Construct the appropriate HACK instruction https://www.geeksforgeeks.org/python-string-concatenation/
-                instruction = '@' + val + '\n'
-                # Append to hackList https://www.geeksforgeeks.org/python-list-append-method/
-                hackList.append(instruction)
-
-            # C Instruction
-            # elif - Check instruction op-code (the first char in the string)
-            elif opcode == '1':
-                # Create strings from the appropriate substrings
-                # aBit, cBit, dBit, jBit
-                aBit = line[3]
-                compBits = line[4:10]
-                destBits = line[10:13]
-                jmpBits = line[13:16]
-                # Check line 94 or https://www.geeksforgeeks.org/string-slicing-in-python/
-                # Return HACK destination string from destTable using dBit
-                # https://www.geeksforgeeks.org/python-dictionary/?ref=lbp
-                dest = destTable[destBits]
-                # Return HACK computation string from compTable using cBit 
-                compUnfiltered = compTable[compBits]
-                # Get the appropriate value by splitting on the comma
-                #   compVal = returnedVal.split(',')[int(aBit)]
-                comp = compUnfiltered.split(',')[int(aBit)]
-                # Return HACK jump string from jumpTable using jBit
-                jmp = jumpTable[jmpBits]
-                # Construct the appropriate HACK instruction
-                instruction = dest+comp+jmp+'\n'
-                # Append to hackList
-                hackList.append(instruction)
-        # Write to file
-        file = open(sys.argv[1].replace('.hack', '.asm'), 'w')
-        file.writelines(hackList)
-        file.close()
+  else: # if file does not exist, then print error
+    print("ERROR: File " + sys.argv[1] + " does not exist.")
+    exit(1)
