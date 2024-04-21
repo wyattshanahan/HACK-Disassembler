@@ -2,7 +2,7 @@
 # To run, type: ruby disassembler.rb <fileName.hack>
 
 if ARGV.empty? # check if any argument/file provided
-  puts 'ERROR: No input file provided. Use ruby disassembler.rb <input_file>'
+  puts 'ERROR: No input file provided. Use ruby disassembler.rb <fileName.hack>'
   exit(1) # exit with error
 end
 
