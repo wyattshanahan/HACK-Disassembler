@@ -12,6 +12,7 @@ It can be found at www.nand2tetris.org and in the book "The Elements of Computin
 - Lua
 - PHP (CLI-based)
 - Python
+- Ruby
 
 # How to use
 
