@@ -14,13 +14,12 @@ if {[string first ".hack" [lindex $argv 0]] < 0} {
 if {[file exists [lindex $argv 0]]} { # if file exists, then open and read lines
     set file [open [lindex $argv 0] r]
     set lines [split [read $file] "\n"]
-    close $file # close file, data stored in $lines
+    close $file
 } else { # if not found, then throw error and exit
     puts "ERROR: File does not exist."
     exit 1
 }
-
-set outList [list] # use for storing converted assembly code
+set out [list]
 
 # Computation Dictionary
 set compTable [dict create \
@@ -65,8 +64,13 @@ set jumpTable [dict create \
     "110" ";JLE" \
     "111" ";JMP"]
 
+foreach line $lines {
+  if {[string index $line 0] == "0"} {
+    puts "A instruction"
+  }
+}
+
 puts "Hello, World!"
 
-puts [llength $argv]
 
 #process lines, convert, add to outarray, write to file, and display output message
