@@ -67,6 +67,11 @@ set jumpTable [dict create \
 foreach line $lines {
   if {[string index $line 0] == "0"} {
     puts "A instruction"
+  } elseif {[string index $line 0] == "1"} {
+    puts "C instruction"
+  } else {
+    puts "ERROR: Unable to parse file."
+    exit 1
   }
 }
 
