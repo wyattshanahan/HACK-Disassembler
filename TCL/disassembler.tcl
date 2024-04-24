@@ -19,7 +19,7 @@ if {[file exists [lindex $argv 0]]} { # if file exists, then open and read lines
     puts "ERROR: File does not exist."
     exit 1
 }
-set out [list]
+set hacklist [list]
 
 # Computation Dictionary
 set compTable [dict create \
@@ -67,6 +67,14 @@ set jumpTable [dict create \
 foreach line $lines {
   if {[string index $line 0] == "0"} {
     puts "A instruction"
+    # Extract substring 
+    set outStr [string range $line 1 15]
+    # Convert binary string to decimal string
+    binary scan [expr {int($outStr)}] S outStr
+    set outStr [expr {$outStr}]
+    # build and append the instruction to hacklist
+    set instruction "@$outStr\n"
+    lappend hackList $instruction    
   } elseif {[string index $line 0] == "1"} {
     puts "C instruction"
   } else {
