@@ -66,24 +66,38 @@ set jumpTable [dict create \
 
 foreach line $lines {
   if {[string index $line 0] == "0"} {
-    puts "A instruction"
     # Extract substring 
     set outStr [string range $line 1 15]
     # Convert binary string to decimal string
     binary scan [expr {int($outStr)}] S outStr
     set outStr [expr {$outStr}]
     # build and append the instruction to hacklist
-    set instruction "@$outStr\n"
-    lappend hackList $instruction    
+    set instruction "@$outStr"
+    lappend hackList $instruction
   } elseif {[string index $line 0] == "1"} {
-    puts "C instruction"
+    # strip string to grab different pieces for building instruction
+    set aBit [string index $line 3]
+    set compBits [string range $line 4 9]
+    set destBits [string range $line 10 12]
+    set jmpBits [string range $line 13 15]
+    set dest [dict get $destTable $destBits]
+    set jmp [dict get $jumpTable $jmpBits]
+    set compUnfiltered [dict get $compTable $compBits]
+    set comp [lindex [split $compUnfiltered ,] $aBit]
+    set instruction "$dest$jmp$comp"
+    lappend hackList $instruction
   } else {
     puts "ERROR: Unable to parse file."
     exit 1
   }
 }
 
-puts "Hello, World!"
-
-
-#process lines, convert, add to outarray, write to file, and display output message
+# Replace '.hack' extension with '.asm' in the input file name
+set outputFile [string map {.hack .asm} [lindex $argv 0]]
+# Open the output file, write lines, close, and output success
+set file [open $outputFile w]
+foreach line $hackList {
+    puts $file $line
+}
+close $file
+puts "File written to $outputFile"
