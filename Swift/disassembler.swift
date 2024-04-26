@@ -23,7 +23,7 @@ else {
   let lines = try String(contentsOfFile: CommandLine.arguments[1]).components(separatedBy: .newlines) // read file into lines
   // store hack instructions
   var hackList = [String]()
-  
+
     // Computation Dictionary
   let compTable: [String: String] = [
       "101010": "0",
@@ -45,7 +45,7 @@ else {
       "000000": "D&A,D&M",
       "010101": "D|A,D|M"
   ]
-  
+
   // Destination Dictionary
   let destTable: [String: String] = [
       "000": "",
@@ -57,7 +57,7 @@ else {
       "110": "AD=",
       "111": "ADM="
   ]
-  
+
   // Jump Dictionary
   let jumpTable: [String: String] = [
       "000": "",
@@ -79,14 +79,31 @@ else {
       }
     }
     else if (line.first == "1"){ // detect if C instruciton
-      print ("C bit")
+      let aBit = String(line[line.index(line.startIndex, offsetBy: 3)])
+      let destBits = String(line[line.index(line.startIndex, offsetBy: 10)..<line.index(line.startIndex, offsetBy: 13)])
+      let jmpBits = String(line[line.index(line.startIndex, offsetBy: 13)..<line.index(line.startIndex, offsetBy: 16)])
+      let compBits = String(line[line.index(line.startIndex, offsetBy: 4)..<line.index(line.startIndex, offsetBy: 10)])
+      let dest = destTable[destBits]! // retrieve value and force unwrap
+      let jmp = jumpTable[jmpBits]! // retrieve value and force unwrap
+      let compUnfiltered = compTable[compBits]! // retrieve comp and filter to choose operation with aBit
+      let comp = compUnfiltered.split(separator: ",")[Int(aBit)!]
+      let instruction = String(dest) + String(comp) + String(jmp) + "\n" // build instruction
+      hackList.append(instruction) // append to hackList
     }
-    else{
+    else {
       print ("ERROR: Unable to parse file.")
       exit(1)
     }
-    print(line)
+  }
+  if let file = FileHandle(forWritingAtPath: CommandLine.arguments[1].replacingOccurrences(of: ".hack", with: ".asm")) {
+      for line in hackList {       // Write lines to output file
+          if let data = line.data(using: .utf8) {
+              file.write(data)
+          }
+      }
+      file.closeFile() // close file and print output
+      print("File written to \(CommandLine.arguments[1].replacingOccurrences(of: ".hack", with: ".asm"))")
+  } else {
+      print("ERROR: Failed to open file for writing.") // if failed, display an error
   }
 }
-// todo: C instruct, write to file, exit
-print ("Hello, World!")
