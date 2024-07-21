@@ -18,7 +18,7 @@ It can be found at www.nand2tetris.org and in the book "The Elements of Computin
 
 # How to use
 
-This program will convert the raw binary from the .asm file into a .hack file of the same base name containing fully functional hack assembly.
+This program will convert the raw binary from the .hack file into a .asm file of the same base name containing fully functional hack assembly.
 
 Each disassembler file requires a .hack file containing translated assembly code. It will disassemble the code into a .asm file of the same name.
 
