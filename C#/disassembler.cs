@@ -24,6 +24,8 @@ class Program
       List<string> lines = new List<string>(File.ReadAllLines(fileName));
       // List to store HACK instructions after translation
       List<string> hackList = new List<string>();
+      // create output file name
+      string outFile = fileName.Replace(".hack", ".asm");
       // Computation dictionary
       Dictionary<string, string> compTable = new Dictionary<string, string>
       {
@@ -78,7 +80,7 @@ class Program
         {
           string binStr = line.Substring(1, 15); // splice to grab chars 1-15 (binary substring)
           string val = Convert.ToInt32(binStr, 2).ToString(); // convert to base 10, then to str
-          string instruction = "@" + val + "\n"; // build instruction
+          string instruction = "@" + val; // build instruction
           hackList.Add(instruction); // add instruction to list
         }
         else if (line[0] == '1') // if first char is a 1, then this is a 'C' instruction
@@ -92,7 +94,7 @@ class Program
           comp = compUnfiltered[aBit]; // filter comp using abit
           destTable.TryGetValue(destBits, out string dest); // lookup in dest table
           jumpTable.TryGetValue(jmpBits, out string jmp); // lookup in jump table
-          string instruction = dest + comp + jmp + "\n"; // build instruction
+          string instruction = dest + comp + jmp; // build instruction
           hackList.Add(instruction); // add instruction to list
         }
         else // if not C or A instruction, then throw error and exit
@@ -100,23 +102,23 @@ class Program
           Console.WriteLine("ERROR: Invalid instruction.");
           return;
         }
+        // write to file after replacing .hack with .asm for the new file name
+        using (StreamWriter file = new StreamWriter(outFile))
+        {
+            // Example of writing some text to the file
+          foreach (var i in hackList) // iterate through the translated lines in hackList
+          {
+            file.WriteLine(i); // write line to file
+          }
+        }
       }
-      // test: Accessing and printing elements
-      Console.WriteLine("Destination for '101': " + destTable["101"]); // Outputs: AM=
-      Console.WriteLine("Jump for '010': " + jumpTable["010"]);       // Outputs: ;JEQ
-      foreach (var line in lines)
+      if (File.Exists(outFile))
       {
-          Console.WriteLine($"Key: {line}");
+        Console.WriteLine("File written to " + outFile);
       }
-      foreach (var i in hackList) // display hackList, testing function to be removed in final ver.
+      else
       {
-        Console.WriteLine(i);
+        Console.WriteLine("ERROR: File " + outFile + " not exist.");
       }
     }
 }
-
-/*
-TODO:
-- write hacklist to file with name
-- print success or not
-*/
