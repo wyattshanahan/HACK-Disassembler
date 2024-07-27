@@ -72,7 +72,35 @@ class Program
           { "110", ";JLE" },
           { "111", ";JMP" }
       };
-
+      foreach (var line in lines)
+      {
+        if (line[0] == '0') // if first char is a 0, then this is an 'A' instruction
+        {
+          string binStr = line.Substring(1, 15); // splice to grab chars 1-15 (binary substring)
+          string val = Convert.ToInt32(binStr, 2).ToString(); // convert to base 10, then to str
+          string instruction = "@" + val + "\n"; // build instruction
+          hackList.Add(instruction); // add instruction to list
+        }
+        else if (line[0] == '1') // if first char is a 1, then this is a 'C' instruction
+        {
+          int aBit = int.Parse(line[3].ToString()); // get a-bit, then convert to int via string
+          string compBits = line.Substring(4, 6); // get comp bits
+          string destBits = line.Substring(10, 3); // get dest bits
+          string jmpBits = line.Substring(13, 3); // get jmp bits
+          compTable.TryGetValue(compBits, out string comp);
+          string[] compUnfiltered = comp.Split(','); // split comp at comma
+          comp = compUnfiltered[aBit]; // filter comp using abit
+          destTable.TryGetValue(destBits, out string dest); // lookup in dest table
+          jumpTable.TryGetValue(jmpBits, out string jmp); // lookup in jump table
+          string instruction = dest + comp + jmp + "\n"; // build instruction
+          hackList.Add(instruction); // add instruction to list
+        }
+        else // if not C or A instruction, then throw error and exit
+        {
+          Console.WriteLine("ERROR: Invalid instruction.");
+          return;
+        }
+      }
       // test: Accessing and printing elements
       Console.WriteLine("Destination for '101': " + destTable["101"]); // Outputs: AM=
       Console.WriteLine("Jump for '010': " + jumpTable["010"]);       // Outputs: ;JEQ
@@ -80,15 +108,15 @@ class Program
       {
           Console.WriteLine($"Key: {line}");
       }
+      foreach (var i in hackList) // display hackList, testing function to be removed in final ver.
+      {
+        Console.WriteLine(i);
+      }
     }
 }
 
 /*
 TODO:
-- loop lines in lines
-- check if A or C
-- translate lines
-- append to hackList
 - write hacklist to file with name
 - print success or not
 */
