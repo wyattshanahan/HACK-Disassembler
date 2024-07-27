@@ -7,26 +7,23 @@ class Program
     static void Main(string[] args)
     {
         // Check number of args, if none, throw error and exit
-        if (args.Length == 0)
-        {
-            Console.WriteLine("ERROR: No input file provided. Use mono disassembler.exe <fileName.hack>.");
-            return; // exit execution
-        }
-        // set filename as first arg
-        string fileName = args[0];
-        // Check if the filename contains ".hack" and if the file exists
-        if (fileName.Contains(".hack") && File.Exists(fileName))
-        {
-            // Read lines from file and store in lines
-            string[] lines = File.ReadAllLines(fileName);
-            // List to store HACK instructions after translation
-            List<string> hackList = new List<string>();
-        }
-      else // throw error if not .hack, or is not found, and exit
-        {
-            Console.WriteLine("File does not exist or is not a .hack file.");
-          return;
-        }
+      if (args.Length == 0)
+      {
+          Console.WriteLine("ERROR: No input file provided. Use mono disassembler.exe <fileName.hack>.");
+          return; // exit execution
+      }
+      // set filename as first arg
+      string fileName = args[0];
+      // Check if the filename contains ".hack" and if the file exists. if not, throw error and exit
+      if (!fileName.Contains(".hack") || !File.Exists(fileName))
+      {
+        Console.WriteLine("File does not exist or is not a .hack file.");
+        return;
+      }
+      // Read lines from file and store in lines
+      List<string> lines = new List<string>(File.ReadAllLines(fileName));
+      // List to store HACK instructions after translation
+      List<string> hackList = new List<string>();
       // Computation dictionary
       Dictionary<string, string> compTable = new Dictionary<string, string>
       {
@@ -79,13 +76,12 @@ class Program
       // test: Accessing and printing elements
       Console.WriteLine("Destination for '101': " + destTable["101"]); // Outputs: AM=
       Console.WriteLine("Jump for '010': " + jumpTable["010"]);       // Outputs: ;JEQ
-      foreach (var item in compTable)
+      foreach (var line in lines)
       {
-          Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
+          Console.WriteLine($"Key: {line}");
       }
     }
 }
-
 
 /*
 TODO:
