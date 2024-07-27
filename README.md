@@ -25,3 +25,8 @@ Each disassembler file requires a .hack file containing translated assembly code
 Each program takes 2 arguments, the program name and the .hack file. For example, in Lua you would use ``lua disassembler.lua Neg.hack`` to disassemble Neg.hack.
 
 The samples directory contains several example .hack files to run through the disassemblers. There is also an assembly .asm file for each .hack file to show what the output should look like.
+
+# Upcoming Language Support
+
+- C# (under development)
+- JavaScript (future development)
