@@ -49,7 +49,36 @@ class Program
           { "000000", "D&A,D&M" },
           { "010101", "D|A,D|M" }
       };
-      // Test: accessing and printing dictionary elements
+
+      // Destination table
+      Dictionary<string, string> destTable = new Dictionary<string, string>
+      {
+          { "000", "" },
+          { "001", "M=" },
+          { "010", "D=" },
+          { "011", "DM=" },
+          { "100", "A=" },
+          { "101", "AM=" },
+          { "110", "AD=" },
+          { "111", "ADM=" }
+      };
+
+      // Jump table
+      Dictionary<string, string> jumpTable = new Dictionary<string, string>
+      {
+          { "000", "" },
+          { "001", ";JGT" },
+          { "010", ";JEQ" },
+          { "011", ";JGE" },
+          { "100", ";JLT" },
+          { "101", ";JNE" },
+          { "110", ";JLE" },
+          { "111", ";JMP" }
+      };
+
+      // test: Accessing and printing elements
+      Console.WriteLine("Destination for '101': " + destTable["101"]); // Outputs: AM=
+      Console.WriteLine("Jump for '010': " + jumpTable["010"]);       // Outputs: ;JEQ
       foreach (var item in compTable)
       {
           Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
@@ -60,11 +89,10 @@ class Program
 
 /*
 TODO:
-- define destTable
-- define JumpTable
 - loop lines in lines
 - check if A or C
 - translate lines
 - append to hackList
 - write hacklist to file with name
 - print success or not
+*/
