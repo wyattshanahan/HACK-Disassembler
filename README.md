@@ -9,6 +9,7 @@ It can be found at www.nand2tetris.org and in the book "The Elements of Computin
 
 # Current languages supported
 
+- C#
 - Lua
 - PHP (CLI-based)
 - Python
@@ -28,5 +29,4 @@ The samples directory contains several example .hack files to run through the di
 
 # Upcoming Language Support
 
-- C# (under development)
 - JavaScript (future development)
