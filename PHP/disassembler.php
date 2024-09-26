@@ -1,4 +1,4 @@
-<?
+<?php
 /* This program converts Hack binary into Hack Assembly Language.
 To run, type: php disassembler.php <fileName.hack>
 
