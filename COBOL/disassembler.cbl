@@ -32,15 +32,20 @@
           05 BASE-NAME      PIC X(75). *>STORE NAME W/O EXT
           05 ASM-NAME       PIC X(79).
        
-       01 COMP-TABLE.
-          05 COMP-ELEMENT OCCURS 16 TIMES.
-             10 COMP-BINARY      PIC X(6).
-             10 COMP-RESULT      PIC X(2).
+       01 DEST-TABLE.
+          05 DEST-ELEMENT OCCURS 8 TIMES.
+             10 DEST-BIN      PIC X(3). *> binary representation
+             10 DEST-ASM      PIC X(4). *> assembly language destination
              
        01 COMP-TABLE.
           05 COMP-ELEMENT OCCURS 18 TIMES.
              10 COMP-BIN  PIC X(6). *> binary representation
              10 COMP-ASM  PIC X(7). *> ASM TRANSLATION
+
+       01 JUMP-TABLE.
+          05 JUMP-ELEMENT OCCURS 8 TIMES.
+             10 JUMP-BIN      PIC X(3). *> binary representation
+             10 JUMP-ASM      PIC X(4). *> assembly language jump condition
 
        
        *> continue...
@@ -71,8 +76,8 @@
           
        120-CONSTRUCT-ARRAYS. *> manage array construction process
           PERFORM 130-COMP-ARRAY.
-          *>PERFORM 140-DEST-ARRAY.
-          *> PERFORM 150-JUMP-ARRAY.
+          PERFORM 140-DEST-ARRAY.
+          PERFORM 150-JUMP-ARRAY.
 
        130-COMP-ARRAY. *> build comp array
           MOVE '101010' TO COMP-BIN (1).   
@@ -112,6 +117,42 @@
           MOVE '010101' TO COMP-BIN (18).
           MOVE 'D|A,D|M' TO COMP-ASM (18).
 
+       140-DEST-ARRAY. *> build dest array
+           MOVE '000' TO DEST-BIN(1).   
+           MOVE '' TO DEST-ASM(1).
+           MOVE '001' TO DEST-BIN(2).   
+           MOVE 'M=' TO DEST-ASM(2).
+           MOVE '010' TO DEST-BIN(3).   
+           MOVE 'D=' TO DEST-ASM(3).
+           MOVE '011' TO DEST-BIN(4).   
+           MOVE 'DM=' TO DEST-ASM(4).
+           MOVE '100' TO DEST-BIN(5).   
+           MOVE 'A=' TO DEST-ASM(5).
+           MOVE '101' TO DEST-BIN(6).   
+           MOVE 'AM=' TO DEST-ASM(6).
+           MOVE '110' TO DEST-BIN(7).   
+           MOVE 'AD=' TO DEST-ASM(7).
+           MOVE '111' TO DEST-BIN(8).   
+           MOVE 'ADM=' TO DEST-ASM(8).
+
+       150-JUMP-ARRAY.
+           MOVE '000' TO JUMP-BIN(1).   
+           MOVE '' TO JUMP-ASM(1).
+           MOVE '001' TO JUMP-BIN(2).   
+           MOVE ';JGT' TO JUMP-ASM(2).
+           MOVE '010' TO JUMP-BIN(3).   
+           MOVE ';JEQ' TO JUMP-ASM(3).
+           MOVE '011' TO JUMP-BIN(4).   
+           MOVE ';JGE' TO JUMP-ASM(4).
+           MOVE '100' TO JUMP-BIN(5).   
+           MOVE ';JLT' TO JUMP-ASM(5).
+           MOVE '101' TO JUMP-BIN(6).   
+           MOVE ';JNE' TO JUMP-ASM(6).
+           MOVE '110' TO JUMP-BIN(7).   
+           MOVE ';JLE' TO JUMP-ASM(7).
+           MOVE '111' TO JUMP-BIN(8).   
+           MOVE ';JMP' TO JUMP-ASM(8).
+
        
        200-PROCESS.
           OPEN INPUT HACK-FILE.
@@ -123,9 +164,9 @@
           CLOSE ASM-FILE.
   
        *> todo: 
-       *> define conversion tables
        *> read files, check if a or C-INSTRUCTION
        *> processes for a and C-INSTRUCTION
+       *> add exception handling for failing to find a file
        
        
        
@@ -148,3 +189,4 @@
        *>        CLOSE HACK-FILE.
        *>      CLOSE ASM-FILE.
        *>    STOP RUN.
+
