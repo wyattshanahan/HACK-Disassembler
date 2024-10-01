@@ -157,36 +157,33 @@
        200-PROCESS.
           OPEN INPUT HACK-FILE.
           OPEN OUTPUT ASM-FILE.
-          DISPLAY "TO BE WRITTEN".
+          READ HACK-FILE
+              AT END
+                 MOVE 'y' TO EOF,
+              NOT AT END
+                 PERFORM 210-TRANSLATE,
+          END-READ.
+          
+       210-TRANSLATE.
+           IF HACK-RECORD(1:1) = "0"
+              PERFORM 220-A-INST,
+           ELSE
+              PERFORM 230-C-INST,
+           END-IF.
+           
+       220-A-INST.
+              DISPLAY "WRITE THIS".
+       
+       230-C-INST.
+              DISPLAY "WRITE THIS, TOO.".
+          *> read line and check if first char is for A or C instruction. process using 220/230 - 220/30 should write out
+          *>loop through file, perform process 210 to check if A or C, then 220 or 230 for respective
+          *> 220 or 230 should write the line to output file
        
        300-TERMINATION.
           CLOSE HACK-FILE.
           CLOSE ASM-FILE.
   
        *> todo: 
-       *> read files, check if a or C-INSTRUCTION
        *> processes for a and C-INSTRUCTION
        *> add exception handling for failing to find a file
-       
-       
-       
-          *>OPEN INPUT HACK-FILE.
-          *>OPEN OUTPUT ASM-FILE.
-          
-          *>PERFORM UNTIL EOF
-            *> READ HACK-FILE INTO HACK-RECORD
-               *> AT END SET EOF TO TRUE
-             *>END-READ
-       
-            *> IF HACK-RECORD(1:1) = "0"
-         *>       PERFORM PROCESS-A-INSTRUCTION
-         *>    ELSE
-         *>       PERFORM PROCESS-C-INSTRUCTION
-         *>    END-IF
-       *>
-       *>        END-PERFORM.
-       *>
-       *>        CLOSE HACK-FILE.
-       *>      CLOSE ASM-FILE.
-       *>    STOP RUN.
-
