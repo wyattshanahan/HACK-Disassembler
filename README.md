@@ -30,4 +30,5 @@ The samples directory contains several example .hack files to run through the di
 # Upcoming Language Support
 
 - COBOL
-- JavaScript (future development)
+- JavaScript
+- Pascal
